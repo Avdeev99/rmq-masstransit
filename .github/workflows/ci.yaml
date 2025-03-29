@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Images
 
 on:
   workflow_dispatch:
@@ -31,12 +31,26 @@ jobs:
       - name: Set repository name to lowercase
         run: echo "REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Build and push Docker image
+      # Build and push Producer API image
+      - name: Build and push Producer API Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Rmq.Producer.Api/Dockerfile
           push: true
           platforms: linux/amd64
           tags: |
-            ghcr.io/${{ env.REPO_NAME }}:latest
-            ghcr.io/${{ env.REPO_NAME }}:${{ github.sha }}
+            ghcr.io/${{ env.REPO_NAME }}/producer:latest
+            ghcr.io/${{ env.REPO_NAME }}/producer:${{ github.sha }}
+
+      # Build and push Consumer API image
+      - name: Build and push Consumer API Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Rmq.Consumer.Api/Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/${{ env.REPO_NAME }}/consumer:latest
+            ghcr.io/${{ env.REPO_NAME }}/consumer:${{ github.sha }}

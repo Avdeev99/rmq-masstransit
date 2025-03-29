@@ -23,17 +23,37 @@ services:
   rmq-producer-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Rmq.Producer.Api/Dockerfile
     container_name: rmq-producer-api
     ports:
       - "8080:8080"
       - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - RabbitMqSettings__Host=rabbitmq
-      - RabbitMqSettings__VirtualHost=/
-      - RabbitMqSettings__Username=guest
-      - RabbitMqSettings__Password=guest
+      - RabbitMQSettings__Host=rabbitmq
+      - RabbitMQSettings__VirtualHost=/
+      - RabbitMQSettings__Username=guest
+      - RabbitMQSettings__Password=guest
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - rabbitmq_network
+
+  rmq-consumer-api:
+    build:
+      context: .
+      dockerfile: Rmq.Consumer.Api/Dockerfile
+    container_name: rmq-consumer-api
+    ports:
+      - "8082:8080"
+      - "8083:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQSettings__Host=rabbitmq
+      - RabbitMQSettings__VirtualHost=/
+      - RabbitMQSettings__Username=guest
+      - RabbitMQSettings__Password=guest
     depends_on:
       rabbitmq:
         condition: service_healthy

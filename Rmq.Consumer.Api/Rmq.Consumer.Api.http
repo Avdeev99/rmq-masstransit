@@ -1,0 +1,6 @@
+@Rmq.Consumer.Api_HostAddress = http://localhost:5263
+
+GET {{Rmq.Consumer.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,6 +1,4 @@
-using Rmq.Producer.Api.Extensions;
-using Rmq.Producer.Api.Services;
-using Rmq.Producer.Api.Services.Interfaces;
+using Rmq.Consumer.Api.Extensions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -16,16 +14,16 @@ builder.Services.AddLogging(logging =>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
+        // Configure JSON serialization
         options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-    
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.RegisterMassTransit(builder.Configuration);
-builder.Services.AddScoped<IMessageService, MessageService>();
 
 var app = builder.Build();
 
