@@ -1,4 +1,4 @@
-using Rmq.Producer.Api.Contracts;
+using Rmq.Core.Contracts;
 
 namespace Rmq.Producer.Api.Services.Interfaces;
 

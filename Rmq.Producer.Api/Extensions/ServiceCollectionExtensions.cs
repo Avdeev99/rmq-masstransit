@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MassTransit;
-using Rmq.Producer.Api.Contracts;
-using Rmq.Producer.Api.Settings;
+using Rmq.Core.Contracts;
+using Rmq.Core.Settings;
 
 namespace Rmq.Producer.Api.Extensions;
 

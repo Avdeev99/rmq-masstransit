@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Rmq.Producer.Api.Contracts;
+using Rmq.Core.Contracts;
 using Rmq.Producer.Api.Services.Interfaces;
 
 namespace Rmq.Producer.Api.Controllers;

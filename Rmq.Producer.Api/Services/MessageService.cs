@@ -1,5 +1,5 @@
 using MassTransit;
-using Rmq.Producer.Api.Contracts;
+using Rmq.Core.Contracts;
 using Rmq.Producer.Api.Services.Interfaces;
 
 namespace Rmq.Producer.Api.Services;

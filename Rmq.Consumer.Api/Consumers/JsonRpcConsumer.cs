@@ -1,6 +1,6 @@
 using System.Text.Json;
 using MassTransit;
-using Rmq.Consumer.Api.Contracts;
+using Rmq.Core.Contracts;
 
 namespace Rmq.Consumer.Api.Consumers;
 

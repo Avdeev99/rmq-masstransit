@@ -1,4 +1,4 @@
-namespace Rmq.Producer.Api.Settings;
+namespace Rmq.Core.Settings;
 
 public class RabbitMqSettings
 {

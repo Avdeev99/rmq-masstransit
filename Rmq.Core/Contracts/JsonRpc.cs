@@ -1,4 +1,4 @@
-namespace Rmq.Producer.Api.Contracts;
+namespace Rmq.Core.Contracts;
 
 public record JsonRpcRequest
 {
@@ -29,4 +29,4 @@ public record JsonRpcError
     public string Message { get; init; } = string.Empty;
 
     public string? Data { get; init; }
-} 
+}
