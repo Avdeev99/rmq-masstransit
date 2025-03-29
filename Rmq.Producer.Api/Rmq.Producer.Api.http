@@ -1,0 +1,14 @@
+@Rmq.Producer.Api_HostAddress = https://localhost:7035
+
+### Send JSON-RPC message
+POST {{Rmq.Producer.Api_HostAddress}}/api/jsonrpc
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": "{{$guid}}",
+  "method": "ProcessMessage",
+  "params": {
+    "content": "This is a test message"
+  }
+}
