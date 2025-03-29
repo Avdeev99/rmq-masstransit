@@ -30,10 +30,10 @@ services:
       - "8081:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - RabbitMQSettings__Host=rabbitmq
-      - RabbitMQSettings__VirtualHost=/
-      - RabbitMQSettings__Username=guest
-      - RabbitMQSettings__Password=guest
+      - RabbitMqSettings__Host=rabbitmq
+      - RabbitMqSettings__VirtualHost=/
+      - RabbitMqSettings__Username=guest
+      - RabbitMqSettings__Password=guest
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -50,10 +50,10 @@ services:
       - "8083:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - RabbitMQSettings__Host=rabbitmq
-      - RabbitMQSettings__VirtualHost=/
-      - RabbitMQSettings__Username=guest
-      - RabbitMQSettings__Password=guest
+      - RabbitMqSettings__Host=rabbitmq
+      - RabbitMqSettings__VirtualHost=/
+      - RabbitMqSettings__Username=guest
+      - RabbitMqSettings__Password=guest
     depends_on:
       rabbitmq:
         condition: service_healthy
