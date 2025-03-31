@@ -38,6 +38,19 @@ RabbitMQ connection settings can be found in `appsettings.json`:
    - Any other method: Returns a "Method not found" error
 4. A strongly-typed JSON-RPC response is sent back to the producer
 
+## Supported Methods
+
+Currently, the consumer handles the following JSON-RPC methods:
+
+| Method | Description | Handler |
+|--------|-------------|---------|
+| `user.get` | Retrieves user information by ID | `GetUserConsumer` |
+
+To add new methods:
+1. Create a new request/response contract in the Core project
+2. Implement a new consumer class that implements `IConsumer<JsonRpcRequest<YourRequestType>>`
+3. Register the consumer in the MassTransit configuration
+
 ## Running with Docker Compose
 
 The easiest way to run this application with the Producer and RabbitMQ:

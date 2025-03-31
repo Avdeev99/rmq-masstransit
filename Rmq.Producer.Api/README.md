@@ -155,6 +155,19 @@ This architecture allows for:
 - Easy addition of new message types and handlers
 - Decoupled components that can be independently tested
 
+## Supported Methods
+
+Currently, the API supports the following JSON-RPC methods:
+
+| Method | Description | Parameters | Response |
+|--------|-------------|------------|----------|
+| `user.get` | Retrieves user information by ID | `id`: String - User identifier | User object with id, name, and email |
+
+To add new methods:
+1. Create a new request/response contract in the Core project
+2. Add a new handler method in JsonRpcController
+3. Register the message consumer in MassTransit configuration
+
 ## Docker Environment Variables
 
 Environment variables are configured in the `docker-compose.yml` file. You can modify them there or override them when running Docker Compose:

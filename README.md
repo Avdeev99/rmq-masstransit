@@ -47,6 +47,14 @@ curl -X POST http://localhost:8080/api/json-rpc \
   }'
 ```
 
+## Supported Methods
+
+Currently, the application supports the following JSON-RPC methods:
+
+| Method | Description | Parameters | Response |
+|--------|-------------|------------|----------|
+| `user.get` | Retrieves user information by ID | `id`: String - User identifier | User object with id, name, and email |
+
 ## More Information
 
 For detailed documentation, see:
