@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
 
         services.AddMassTransit(x =>
         {
-            x.AddConsumer<JsonRpcConsumer>();
+            x.AddConsumer<GetUserConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
                 cfg.Host(
@@ -35,9 +35,9 @@ public static class ServiceCollectionExtensions
                     return options;
                 });
                 
-                cfg.ReceiveEndpoint("jsonrpc-queue", e =>
+                cfg.ReceiveEndpoint("q.user.get", e =>
                 {
-                    e.ConfigureConsumer<JsonRpcConsumer>(context);
+                    e.ConfigureConsumer<GetUserConsumer>(context);
                 });
                     
                 cfg.ConfigureEndpoints(context);

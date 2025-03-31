@@ -6,6 +6,7 @@ This is a .NET API application that consumes messages from a RabbitMQ queue usin
 
 - Consumes JSON-RPC messages from RabbitMQ queue
 - Processes messages based on the method name
+- Type-safe generic message handling
 - Responds with JSON-RPC formatted responses
 - Dockerized application
 
@@ -30,12 +31,12 @@ RabbitMQ connection settings can be found in `appsettings.json`:
 
 ## How It Works
 
-1. The consumer listens to the `jsonrpc-queue` RabbitMQ queue
-2. When a message is received, it's parsed as a JSON-RPC request
-3. The consumer processes the request based on the `Method` property:
-   - `ProcessMessage`: Processes the content specified in the params and returns a result
+1. The consumer registers handlers for specific JSON-RPC method types (e.g., `user.get`)
+2. When a message is received, it's consumed by the appropriate handler (e.g., `GetUserConsumer`)
+3. The consumer processes the strongly-typed request based on the method:
+   - `user.get`: Retrieves user information based on the ID in the request
    - Any other method: Returns a "Method not found" error
-4. A JSON-RPC response is sent back to the producer
+4. A strongly-typed JSON-RPC response is sent back to the producer
 
 ## Running with Docker Compose
 
@@ -55,9 +56,9 @@ The consumer handles and responds with JSON-RPC 2.0 formatted messages:
 {
   "jsonrpc": "2.0",
   "id": "unique-id-string",
-  "method": "MethodName",
+  "method": "user.get",
   "params": {
-    "content": "Your message here"
+    "id": "user-123"
   }
 }
 ```
@@ -68,9 +69,9 @@ The consumer handles and responds with JSON-RPC 2.0 formatted messages:
   "jsonrpc": "2.0",
   "id": "unique-id-string",
   "result": {
-    "content": "Processed: Your message here",
-    "success": true,
-    "timestamp": "2023-03-29T12:34:56.789Z"
+    "id": "generated-guid",
+    "name": "John Doe",
+    "email": "john.doe@example.com"
   }
 }
 ```

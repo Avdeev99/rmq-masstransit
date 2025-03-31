@@ -2,10 +2,10 @@ using Rmq.Core.Contracts;
 
 namespace Rmq.Producer.Api.Services.Interfaces;
 
-public interface IMessageService
+public interface IMessageService<TRequest, TResponse> where TRequest : JsonRpcRequestBase where TResponse : JsonRpcResponseBase
 {
-    Task<JsonRpcResponse> SendMessageAsync(
-        JsonRpcRequest request,
+    Task<TResponse> SendMessageAsync(
+        TRequest request,
         CancellationToken cancellationToken = default);
 }
 

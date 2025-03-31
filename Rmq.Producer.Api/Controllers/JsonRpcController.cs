@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Rmq.Core.Contracts;
+using Rmq.Core.Contracts.Requests;
+using Rmq.Core.Contracts.Responses;
 using Rmq.Producer.Api.Services.Interfaces;
+using System.Text.Json;
 
 namespace Rmq.Producer.Api.Controllers;
 
@@ -8,17 +11,21 @@ namespace Rmq.Producer.Api.Controllers;
 [Route("api/json-rpc")]
 public class JsonRpcController : ControllerBase
 {
-    private readonly IMessageService _messageService;
     private readonly ILogger<JsonRpcController> _logger;
+    private readonly IServiceProvider _serviceProvider;
 
-    public JsonRpcController(IMessageService messageService, ILogger<JsonRpcController> logger)
+    public JsonRpcController(
+        ILogger<JsonRpcController> logger, 
+        IServiceProvider serviceProvider)
     {
-        _messageService = messageService;
         _logger = logger;
+        _serviceProvider = serviceProvider;
     }
 
     [HttpPost]
-    public async Task<IActionResult> HandleJsonRpc([FromBody] JsonRpcRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> HandleJsonRpc(
+        [FromBody] JsonRpcRequestBase request,
+        CancellationToken cancellationToken)
     {
         _logger.LogInformation(
             "Received JSON-RPC request: Method={Method}, Id={Id}", 
@@ -27,7 +34,7 @@ public class JsonRpcController : ControllerBase
 
         if (string.IsNullOrEmpty(request.Method))
         {
-            return BadRequest(new JsonRpcResponse
+            return BadRequest(new JsonRpcResponse<GetUserResponse>
             {
                 Id = request.Id,
                 Error = new JsonRpcError
@@ -40,7 +47,7 @@ public class JsonRpcController : ControllerBase
 
         try
         {
-            var response = await _messageService.SendMessageAsync(request, cancellationToken);
+            var response = await HandleRequestAsync(request, cancellationToken);
 
             return Ok(response);
         }
@@ -48,7 +55,7 @@ public class JsonRpcController : ControllerBase
         {
             _logger.LogError(ex, "Error processing JSON-RPC request");
 
-            return StatusCode(500, new JsonRpcResponse
+            return StatusCode(500, new JsonRpcResponse<GetUserResponse>
             {
                 Id = request.Id,
                 Error = new JsonRpcError
@@ -60,4 +67,31 @@ public class JsonRpcController : ControllerBase
             });
         }
     }
-} 
+
+    private async Task<JsonRpcResponseBase> HandleRequestAsync(JsonRpcRequestBase request, CancellationToken cancellationToken)
+    {
+        switch (request.Method)
+        {
+            case "user.get":
+                return await HandleGetUserRequestAsync(request, cancellationToken);
+            default:
+                throw new Exception($"Method '{request.Method}' not found");
+        }
+    }
+
+    private async Task<JsonRpcResponseBase> HandleGetUserRequestAsync(JsonRpcRequestBase request, CancellationToken cancellationToken)
+    {
+        var getUserRequest = new JsonRpcRequest<GetUserRequest>
+        {
+            Id = request.Id,
+            JsonRpc = request.JsonRpc,
+            Method = request.Method,
+            Params = request.Params?.Deserialize<GetUserRequest>()
+        };
+
+        var messageService = _serviceProvider.GetRequiredService<IMessageService<JsonRpcRequest<GetUserRequest>, JsonRpcResponse<GetUserResponse>>>();
+        var response = await messageService.SendMessageAsync(getUserRequest, cancellationToken);
+
+        return response;
+    }
+}

@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using MassTransit;
 using Rmq.Core.Contracts;
+using Rmq.Core.Contracts.Requests;
 using Rmq.Core.Settings;
 
 namespace Rmq.Producer.Api.Extensions;
@@ -37,7 +38,7 @@ public static class ServiceCollectionExtensions
                 cfg.ConfigureEndpoints(context);
             });
             
-            x.AddRequestClient<JsonRpcRequest>(new Uri("queue:jsonrpc-queue"));
+            x.AddRequestClient<JsonRpcRequest<GetUserRequest>>(new Uri("queue:q.user.get"));
         });
 
         return services;

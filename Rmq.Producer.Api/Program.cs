@@ -25,7 +25,7 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.RegisterMassTransit(builder.Configuration);
-builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped(typeof(IMessageService<,>), typeof(MessageService<,>));
 
 var app = builder.Build();
 

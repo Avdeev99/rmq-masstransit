@@ -6,6 +6,8 @@ This is a .NET API application that publishes messages to a RabbitMQ queue using
 
 - JSON-RPC 2.0 endpoint for publishing messages to RabbitMQ queue
 - Messages published in JSON-RPC format following the specification
+- Generic message handling architecture for type-safe request/response
+- Dynamic service resolution for different message types
 - Waits for responses from consumers
 - Dockerized application
 
@@ -72,14 +74,14 @@ This will start:
 Send a message using JSON-RPC 2.0 format:
 
 ```bash
-curl -X POST http://localhost:8080/api/jsonrpc \
+curl -X POST http://localhost:8080/api/json-rpc \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
     "id": "123e4567-e89b-12d3-a456-426614174000",
-    "method": "ProcessMessage",
+    "method": "user.get",
     "params": {
-      "content": "Your message here"
+      "id": "user-123"
     }
   }'
 ```
@@ -91,9 +93,9 @@ The response will also be in JSON-RPC 2.0 format:
   "jsonrpc": "2.0",
   "id": "123e4567-e89b-12d3-a456-426614174000",
   "result": {
-    "content": "Processed: Your message here",
-    "success": true,
-    "timestamp": "2023-03-29T12:34:56.789Z"
+    "id": "generated-guid",
+    "name": "John Doe",
+    "email": "john.doe@example.com"
   }
 }
 ```
@@ -137,6 +139,22 @@ The API follows the JSON-RPC 2.0 specification:
 }
 ```
 
+## Architecture Details
+
+The application uses a dynamic and generic approach to handle different types of JSON-RPC requests:
+
+1. The controller receives requests as `JsonRpcRequestBase` objects
+2. Based on the `method` field, it routes to the appropriate handler (e.g., `user.get`)
+3. The handler converts the base request to a strongly-typed request with proper params
+4. A generic `IMessageService<TRequest, TResponse>` is resolved from the service provider
+5. The message is sent to RabbitMQ and waits for a response
+6. The typed response is returned to the client
+
+This architecture allows for:
+- Type safety throughout the request/response pipeline
+- Easy addition of new message types and handlers
+- Decoupled components that can be independently tested
+
 ## Docker Environment Variables
 
 Environment variables are configured in the `docker-compose.yml` file. You can modify them there or override them when running Docker Compose:
@@ -146,4 +164,4 @@ RabbitMQ__Host=custom-rabbitmq-host \
 RabbitMQ__Username=custom-user \
 RabbitMQ__Password=custom-password \
 docker-compose up -d
-``` 
+```

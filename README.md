@@ -1,6 +1,6 @@
 # RabbitMQ MassTransit with JSON-RPC
 
-.NET applications that demonstrate how to use MassTransit with RabbitMQ for message publishing and consuming using the JSON-RPC 2.0 protocol format.
+.NET applications that demonstrate how to use MassTransit with RabbitMQ for message publishing and consuming using the JSON-RPC 2.0 protocol format with a generic, type-safe approach.
 
 ## Quick Start
 
@@ -23,25 +23,26 @@ docker-compose logs -f
 ## Architecture
 
 1. The Producer API receives JSON-RPC requests through its HTTP endpoint
-2. It publishes these requests to a RabbitMQ queue named `jsonrpc-queue`
-3. The Consumer API picks up the messages from the queue
-4. The Consumer processes the messages based on the method name
-5. The Consumer sends back JSON-RPC responses
-6. The Producer receives the responses and returns them to the original caller
+2. It converts the request to a strongly-typed message using generics
+3. It publishes these requests to a RabbitMQ queue based on the message type (e.g., `queue:q.user.get`)
+4. The Consumer API picks up the messages from the queue with the appropriate consumer
+5. The Consumer processes the strongly-typed messages based on the method
+6. The Consumer sends back strongly-typed JSON-RPC responses
+7. The Producer receives the responses and returns them to the original caller
 
 ## Testing the API
 
 Send a message via the Producer API using JSON-RPC 2.0 format:
 
 ```bash
-curl -X POST http://localhost:8080/api/jsonrpc \
+curl -X POST http://localhost:8080/api/json-rpc \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
     "id": "123e4567-e89b-12d3-a456-426614174000",
-    "method": "ProcessMessage",
+    "method": "user.get",
     "params": {
-      "content": "Your message here"
+      "id": "user-123"
     }
   }'
 ```
